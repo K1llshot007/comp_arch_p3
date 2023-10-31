@@ -1,0 +1,11 @@
+./NMM-csim.bin 2 1 MainMem 1 1 1 
+[ [	              13	              1b ]
+  [	              5c	              7d ] ]
+
+Statistics for memory MainMem:
+	Read Hits	16
+	Write Hits	4
+
+
+Main Memory = { ... }
+./NMM-csim.bin 2 1 MainMem 1 1 1 L2 128 1 32 L1 64 1 32
