@@ -70,17 +70,23 @@ uint64_t performaccess(cache* acache, unsigned long long address, unsigned int s
   }
   if(acache->ismainmemory){
     if(write){
-      if(!blockAccess){acache->writehits++;}
+      if(!blockAccess){
+	      acache->writehits++;
+      }
       {
         //INCREDIBLY NON-PORTABLE - DO NOT TRY THIS AT HOME 
         *((unsigned long long*)address)=value;
       }
-    } else {
-      if(!blockAccess){acache->readhits++;}
+    }
+    else {
+      if(!blockAccess){
+	      acache->readhits++;
+      }
     }
     //INCREDIBLY NON-PORTABLE - DO NOT TRY THIS AT HOME 
     return *((unsigned long long*)address);
-  } else {
+  }
+  else {
     unsigned long long index = getindex(acache, address);
     unsigned long long tag = gettag(acache, address);
     unsigned int curway;
@@ -95,11 +101,13 @@ uint64_t performaccess(cache* acache, unsigned long long address, unsigned int s
             //INCREDIBLY NON-PORTABLE - DO NOT TRY THIS AT HOME 
             acache->sets[index].blocks[curway].datawords[(address&((unsigned long long)(acache->blocksize)-1))>>3]=value;
           }
-	} else {
+	} 
+	else {
 	  if(!blockAccess){acache->readhits++;}
 	}
 	return acache->sets[index].blocks[curway].datawords[(address&((unsigned long long)(acache->blocksize)-1))>>3];
-      } else {
+      } 
+      else {
 	if(!acache->sets[index].blocks[curway].valid || acache->sets[index].blocks[curway].policydata < oldesttime){
 	  oldesttime=acache->sets[index].blocks[curway].policydata;
 	  oldestway=curway;
