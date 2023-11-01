@@ -35,11 +35,18 @@ unsigned long long gettag(cache* acache, unsigned long long address){
 }
 
 void writeback(cache* acache, unsigned int index, unsigned int oldestway){
-  // uint64_t baseaddress = ...
-  //for ...{
-    //
-    //
-  //}
+  unsigned long long tag = acache->sets[index].blocks[oldestway].tag;
+  unsigned int blockOffset = acache->BO;
+  unsigned long long indexSize = lg2pow2(index);
+  unsigned int blockSize = acache->blocksize;
+  uint64_t baseaddress = 0;
+  baseaddress = (tag<<(indexSize + blockSize)) |  (index << blockSize) | blockOffset;
+  for (unsigned int i =0; i<(blockSize/sizeof(unsigned long long));++i){
+    unsigned long long wordsInLine = acache->sets[index].blocks[oldestway].datawords[i];
+    unsigned long long whereToWrite = baseaddress + (i * sizeof(unsigned long long));
+    cache *cacheToWrite = acache->nextcache;
+    performaccess(cacheToWrite, whereToWrite, 8, 1, wordsInLine, 0);
+  }
 }
 
 void fill(cache * acache, unsigned int index, unsigned int oldestway, unsigned long long address){
