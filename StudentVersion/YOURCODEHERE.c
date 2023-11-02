@@ -45,10 +45,11 @@ void writeback(cache* acache, unsigned int index, unsigned int oldestway){
   baseaddress = (tag<<(indexSize + blockOffset)) |  (index << blockOffset) ;
   for (unsigned int i =0; i<(blockSize/sizeof(unsigned long long));++i){
     unsigned long long wordsInLine = acache->sets[index].blocks[oldestway].datawords[i];
-    unsigned long long whereToWrite = baseaddress + (i * sizeof(unsigned long long));
+    unsigned long long whereToWrite = baseaddress + (i * sizeof(i64));
     cache *cacheToWrite = acache->nextcache;
-    // performaccess(cacheToWrite, whereToWrite, 8, 1, wordsInLine, 0);
-    StoreWord(cacheToWrite, whereToWrite, wordsInLine);
+    performaccess(cacheToWrite, whereToWrite, 8, 1, wordsInLine, i);
+    // if(acache->sets[index].blocks[oldestway].dirty)
+    // StoreWord(cacheToWrite, whereToWrite, wordsInLine);
 
   }
 }
@@ -61,7 +62,9 @@ void fill(cache * acache, unsigned int index, unsigned int oldestway, unsigned l
   uint64_t baseaddress = address & ~((i64)((acache->blocksize)-1));
   for (i64 x=0; x<(acache->blocksize); x+=(sizeof(i64))){
     i64 fromWhereToGetData = baseaddress + x;
-    LoadWord(cacheToFillFrom, fromWhereToGetData);
+    // LoadWord(cacheToFillFrom, fromWhereToGetData);
+    i64 someValue = performaccess(cacheToFillFrom,fromWhereToGetData, 8,0,0,x);
+    acache->sets[index].blocks[oldestway].datawords[x/8] = someValue;
     
   }
 }
